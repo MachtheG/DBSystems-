@@ -151,3 +151,54 @@ CREATE USER admin_user WITH PASSWORD 'secure_password';
 
 -- Grant Passenger Role (Read-Only Access)
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO passenger_user;
+
+-- Grant Operator Role (Read and Write Access to Schedules and Tickets)
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO operator_user;
+
+
+-- Grant Admin Role (Full Access)
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO operator_user;
+
+CREATE TABLE Encrypted_Passenger (
+    Passenger_ID INT PRIMARY KEY,
+    Encrypted_Email BYTEA, 
+    Encrypted_Phone BYTEA,  
+    Name VARCHAR(100)
+);
+
+--Enable the pgcrypto Extension
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Insert data with encryption
+INSERT INTO Encrypted_Passenger (Passenger_ID, Encrypted_Email, Encrypted_Phone, Name)
+VALUES (
+    1,
+    pgp_sym_encrypt('john.doe@example.com', 'encryption_key'), -- Encrypt email
+    pgp_sym_encrypt('1234567890', 'encryption_key'),          -- Encrypt phone
+    'John Doe'
+);
+
+-- Retrieve and decrypt data
+SELECT Passenger_ID, 
+       pgp_sym_decrypt(Encrypted_Email, 'encryption_key') AS Email, 
+       pgp_sym_decrypt(Encrypted_Phone, 'encryption_key') AS Phone, 
+       Name
+FROM Encrypted_Passenger;
+
+--a CASE Statement for Mapping
+SELECT Route.Route_ID, 
+       Route.Route_name, 
+       AVG(
+           CASE 
+               WHEN Schedule.Traffic_condition = 'Light' THEN 1
+               WHEN Schedule.Traffic_condition = 'Moderate' THEN 2
+               WHEN Schedule.Traffic_condition = 'Heavy' THEN 3
+               ELSE NULL -- Exclude unclassified conditions
+           END
+       ) AS Average_Traffic
+FROM Route
+JOIN Schedule ON Route.Route_ID = Schedule.Route_ID
+GROUP BY Route.Route_ID, Route.Route_name;
