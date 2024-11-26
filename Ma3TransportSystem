@@ -21,9 +21,6 @@ VALUES
 
 SELECT * FROM Schedule;
 
-
-
-
 -- Creating a table for Ticket
 CREATE TABLE Ticket (
     Ticket_ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +38,6 @@ VALUES
 (3, 3, 100.00);
 
 SELECT * FROM Ticket;
-
 
 -- Create table Passenger
 CREATE TABLE Passenger (
@@ -68,3 +64,17 @@ UPDATE Passenger
 SET name = 'Mungai Robert'
 WHERE contact_info = 'njeri.mutua@example.com';
 SELECT * FROM Passenger;
+
+-- Insert into Route
+INSERT INTO Route (Route_name, Start_location, Distance, End_location)
+VALUES 
+('Route 34', 'CBD', 8.5, 'Kilimani'),
+('Route 45', 'CBD', 12.0, 'Eastleigh'),
+('Route 125', 'CBD', 18.0, 'Karen');
+
+-- Insert into Vehicle
+INSERT INTO Vehicle (Route_ID, Capacity, Type)
+VALUES 
+(1, 14, 'Matatu'),
+(2, 33, 'Minibus'),
+(3, 50, 'Bus');
