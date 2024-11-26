@@ -202,3 +202,55 @@ SELECT Route.Route_ID,
 FROM Route
 JOIN Schedule ON Route.Route_ID = Schedule.Route_ID
 GROUP BY Route.Route_ID, Route.Route_name;
+
+--calculate the days since the last maintenance.
+SELECT Vehicle.Vehicle_ID, 
+       COUNT(Maintenance.Maintenance_ID) AS Maintenance_Count, 
+       MAX(Maintenance.Maintenance_date) AS Last_Maintenance_Date,
+       CURRENT_DATE - MAX(Maintenance.Maintenance_date) AS Days_Since_Last_Maintenance
+FROM Vehicle
+JOIN Maintenance ON Vehicle.Vehicle_ID = Maintenance.Vehicle_ID
+GROUP BY Vehicle.Vehicle_ID
+HAVING CURRENT_DATE - MAX(Maintenance.Maintenance_date) > 30;
+
+--retrieve tickets purchased within the last month
+SELECT Passenger.Passenger_ID, 
+       Passenger.Name, 
+       COUNT(Ticket.Ticket_ID) AS Tickets_Bought
+FROM Passenger
+JOIN Ticket ON Passenger.Passenger_ID = Ticket.Passenger_ID
+WHERE Ticket.Purchase_Date > CURRENT_DATE - INTERVAL '1 month'
+GROUP BY Passenger.Passenger_ID, Passenger.Name
+HAVING COUNT(Ticket.Ticket_ID) >= 10;
+
+ALTER TABLE Ticket
+ADD COLUMN Purchase_Date TIMESTAMP;
+
+INSERT INTO Ticket (Ticket_ID, Passenger_ID, Schedule_ID, Fare, Purchase_Date)
+VALUES 
+(101, 201, 301, 3.50, '2024-11-01 08:00:00'),
+(102, 202, 302, 4.00, '2024-11-05 09:15:00'),
+(103, 201, 302, 3.50, '2024-11-10 11:30:00'),
+(104, 202, 301, 3.00, '2024-11-15 14:00:00'),
+(105, 201, 301, 4.50, '2024-11-20 16:45:00');
+
+
+SELECT Ticket_ID, Passenger_ID, Schedule_ID, Fare, Purchase_Date
+FROM Ticket;
+
+SELECT * FROM Ticket;
+
+--calculate the available seats for each schedule
+SELECT Available_Seats_Data.Route_name, 
+       SUM(Available_Seats_Data.Available_Seats * 0.2) AS Estimated_Car_Emission_Saving
+FROM (
+    SELECT Vehicle.Vehicle_ID,
+           Route.Route_name,
+           Vehicle.Capacity - COUNT(Ticket.Ticket_ID) AS Available_Seats
+    FROM Vehicle
+    JOIN Schedule ON Vehicle.Vehicle_ID = Schedule.Vehicle_ID
+    JOIN Route ON Schedule.Route_ID = Route.Route_ID
+    LEFT JOIN Ticket ON Schedule.Schedule_ID = Ticket.Schedule_ID
+    GROUP BY Vehicle.Vehicle_ID, Route.Route_name
+) AS Available_Seats_Data
+GROUP BY Available_Seats_Data.Route_name;
