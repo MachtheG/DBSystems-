@@ -1,1 +1,49 @@
 --SQL Group Work
+-- Vehicle Table
+CREATE TABLE Vehicle (
+    Vehicle_ID INT PRIMARY KEY,
+    Route_ID INT NOT NULL,
+    Capacity INT NOT NULL,
+    Type VARCHAR(50),
+    FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID)
+);
+
+-- Route Table
+CREATE TABLE Route (
+    Route_ID INT PRIMARY KEY,
+    Route_name VARCHAR(100) NOT NULL,
+    Start_location VARCHAR(100) NOT NULL,
+    Distance DECIMAL(10, 2),
+    End_location VARCHAR(100) NOT NULL
+);
+
+-- Passenger Table
+CREATE TABLE Passenger (
+    Passenger_ID INT PRIMARY KEY,
+    Preferred_route_ID INT,
+    Contact_info VARCHAR(150),
+    Name VARCHAR(100),
+    FOREIGN KEY (Preferred_route_ID) REFERENCES Route(Route_ID)
+);
+
+-- Schedule Table
+CREATE TABLE Schedule (
+    Schedule_ID INT PRIMARY KEY,
+    Vehicle_ID INT NOT NULL,
+    Route_ID INT NOT NULL,
+    Departure_time TIMESTAMP,
+    Arrival_time TIMESTAMP,
+    Traffic_condition VARCHAR(100),
+    FOREIGN KEY (Vehicle_ID) REFERENCES Vehicle(Vehicle_ID),
+    FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID)
+);
+
+-- Ticket Table
+CREATE TABLE Ticket (
+    Ticket_ID INT PRIMARY KEY,
+    Passenger_ID INT NOT NULL,
+    Schedule_ID INT NOT NULL,
+    Fare DECIMAL(10, 2),
+    FOREIGN KEY (Passenger_ID) REFERENCES Passenger(Passenger_ID),
+    FOREIGN KEY (Schedule_ID) REFERENCES Schedule(Schedule_ID)
+);
