@@ -41,3 +41,30 @@ VALUES
 (3, 3, 100.00);
 
 SELECT * FROM Ticket;
+
+
+-- Create table Passenger
+CREATE TABLE Passenger (
+    Passenger_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Preferred_route_ID INT NOT NULL,
+    Contact_info VARCHAR(100) UNIQUE NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    Field VARCHAR(100),
+    FOREIGN KEY (Preferred_route_ID) REFERENCES Route(Route_ID) ON DELETE CASCADE
+);
+
+-- Insert into Passenger
+INSERT INTO Passenger (Preferred_route_ID, Contact_info, Name, Field)
+VALUES 
+(1, 'kimani.wanjiku@example.com', 'Kimani Wanjiku', 'Student'),
+(2, 'njeri.mutua@example.com', 'Njeri Mutua', 'Accountant'),
+(3, 'odongo.otieno@example.com', 'Odongo Otieno', 'Engineer');
+SELECT * FROM Passenger;
+
+SELECT * FROM Passenger WHERE Preferred_route_ID = 1;
+SELECT * FROM Passenger;
+
+UPDATE Passenger
+SET name = 'Mungai Robert'
+WHERE contact_info = 'njeri.mutua@example.com';
+SELECT * FROM Passenger;
