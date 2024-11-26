@@ -49,6 +49,7 @@ CREATE TABLE Passenger (
     FOREIGN KEY (Preferred_route_ID) REFERENCES Route(Route_ID) ON DELETE CASCADE
 );
 
+
 -- Insert into Passenger
 INSERT INTO Passenger (Preferred_route_ID, Contact_info, Name, Field)
 VALUES 
