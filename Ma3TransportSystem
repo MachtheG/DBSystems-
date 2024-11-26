@@ -1,5 +1,17 @@
 --SQL Statements
 
+-- Create table Schedule
+CREATE TABLE Schedule (
+    Schedule_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Vehicle_ID INT NOT NULL,
+    Route_ID INT NOT NULL,
+    Departure_time DATETIME NOT NULL,
+    Arrival_time DATETIME NOT NULL,
+    Traffic_condition VARCHAR(50),
+    FOREIGN KEY (Vehicle_ID) REFERENCES Vehicle(Vehicle_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID) ON DELETE CASCADE
+);
+
 -- Creating a table for Ticket
 CREATE TABLE Ticket (
     Ticket_ID INT AUTO_INCREMENT PRIMARY KEY,
