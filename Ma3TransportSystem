@@ -12,6 +12,15 @@ CREATE TABLE Schedule (
     FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID) ON DELETE CASCADE
 );
 
+-- Insert into Schedule
+INSERT INTO Schedule (Vehicle_ID, Route_ID, Departure_time, Arrival_time, Traffic_condition)
+VALUES 
+(1, 1, '2024-11-22 07:00:00', '2024-11-22 07:30:00', 'Light'),
+(2, 2, '2024-11-22 08:15:00', '2024-11-22 08:45:00', 'Moderate'),
+(3, 3, '2024-11-22 09:00:00', '2024-11-22 09:45:00', 'Heavy');
+
+
+
 -- Creating a table for Ticket
 CREATE TABLE Ticket (
     Ticket_ID INT AUTO_INCREMENT PRIMARY KEY,
