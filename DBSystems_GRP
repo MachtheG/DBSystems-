@@ -100,3 +100,54 @@ SELECT Passenger.Name, Ticket.Fare
 FROM Passenger
 JOIN Ticket ON Passenger.Passenger_ID = Ticket.Passenger_ID
 WHERE Ticket.Schedule_ID = 301;
+ALTER TABLE Schedule ADD Driver_Name VARCHAR(100);
+DELETE FROM Maintenance
+WHERE Maintenance_date < '2024-11-01';                 SELECT Vehicle_ID, Maintenance_status, Maintenance_date, Issue_details
+FROM Maintenance;
+
+SELECT Route.Route_name, SUM(Ticket.Fare) AS Total_Revenue
+FROM Ticket
+JOIN Schedule ON Ticket.Schedule_ID = Schedule.Schedule_ID
+JOIN Route ON Schedule.Route_ID = Route.Route_ID
+WHERE Route.Route_ID = 1
+GROUP BY Route.Route_name;
+
+SELECT Route.Route_name, Vehicle.Type, Vehicle.Capacity
+FROM Route
+JOIN Vehicle ON Route.Route_ID = Vehicle.Route_ID;
+UPDATE Schedule
+SET Traffic_condition = 'Light'
+WHERE Schedule_ID = 301;
+
+ALTER TABLE Schedule ADD Driver_Name VARCHAR(100);
+DELETE FROM Maintenance
+WHERE Maintenance_date < '2024-11-01';
+
+SELECT Schedule.Schedule_ID, Route.Route_name, Schedule.Departure_time, Schedule.Arrival_time, Ticket.Fare
+FROM Schedule
+JOIN Route ON Schedule.Route_ID = Route.Route_ID
+JOIN Ticket ON Schedule.Schedule_ID = Ticket.Schedule_ID
+WHERE Route.Route_name = 'Route A';
+
+SELECT Vehicle.Vehicle_ID, Route.Route_name, Schedule.Departure_time, Vehicle.Capacity - COUNT(Ticket.Ticket_ID) AS Remaining_Seats
+FROM Vehicle
+JOIN Schedule ON Vehicle.Vehicle_ID = Schedule.Vehicle_ID
+JOIN Route ON Schedule.Route_ID = Route.Route_ID
+LEFT JOIN Ticket ON Schedule.Schedule_ID = Ticket.Schedule_ID
+WHERE NOW() BETWEEN Schedule.Departure_time AND Schedule.Arrival_time
+GROUP BY Vehicle.Vehicle_ID, Route.Route_name, Schedule.Departure_time;
+
+SELECT Vehicle.Vehicle_ID, 
+       COUNT(Maintenance.Maintenance_ID) AS Total_Maintenance, 
+       MAX(Maintenance.Maintenance_date) AS Last_Maintenance_Date
+FROM Vehicle
+JOIN Maintenance ON Vehicle.Vehicle_ID = Maintenance.Vehicle_ID
+WHERE Maintenance.Maintenance_date > CURRENT_DATE - INTERVAL '1 month'
+GROUP BY Vehicle.Vehicle_ID;
+
+CREATE USER passenger_user WITH PASSWORD 'secure_password';
+CREATE USER operator_user WITH PASSWORD 'secure_password';
+CREATE USER admin_user WITH PASSWORD 'secure_password';
+
+-- Grant Passenger Role (Read-Only Access)
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO passenger_user;
